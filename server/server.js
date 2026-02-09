@@ -14,8 +14,13 @@ const app = express();
 const server = http.createServer(app);
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: [
+    "http://localhost:3000",
+    "https://employeemng-xokj.onrender.com/"
+  ],
+  credentials: true
+})); app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
