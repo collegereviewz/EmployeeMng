@@ -3,6 +3,8 @@ node_modules/
 .pnp
 .pnp.js
 
+QUICK_FIX_MONGODB.md
+SETUP_INSTRUCTIONS.md
 # Testing
 coverage/
 

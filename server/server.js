@@ -27,8 +27,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/employee_
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Socket.io setup (simplified: only for notifications, not group chat)
 const io = new SocketServer(server, {
@@ -152,6 +152,32 @@ eventBus.on('leaveDecision', async ({ leaveId, employeeId, status, decidedBy }) 
 });
 
 const PORT = process.env.PORT || 5000;
+
+// --------------------------
+// DEPLOYMENT CONFIGURATION
+// --------------------------
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  // Set static folder
+  // Navigate up one level to root, then into client/build
+  app.use(express.static(path.join(__dirname, '../client/build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
+// --------------------------
+
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
