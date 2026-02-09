@@ -1,0 +1,420 @@
+/* 🔵 EmployeeCard - Professional EMS Design */
+.employee-card {
+  background: #FFFFFF;
+  /* Card / Panel Background */
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(13, 71, 161, 0.08);
+  border: 1px solid #E3EAF3;
+  /* Divider / Border */
+  transition: all 0.3s ease;
+  height: 100%;
+  /* Maintains exact size */
+  display: flex;
+  flex-direction: column;
+}
+
+.employee-card:hover {
+  box-shadow: 0 8px 30px rgba(13, 71, 161, 0.12);
+  transform: translateY(-2px);
+}
+
+/* 🔵 HEADER - Professional */
+.employee-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #F5F9FF;
+  /* Soft Background */
+}
+
+.employee-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0D47A1;
+  /* Primary Blue */
+  margin: 0 0 0.25rem 0;
+  line-height: 1.3;
+}
+
+.employee-email {
+  color: #1565C0;
+  /* Secondary Blue */
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 🔵 ERROR MESSAGE */
+.error-message {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border-left: 4px solid #dc2626;
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* 🔵 DETAIL GROUPS */
+.employee-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-group label {
+  font-weight: 600;
+  color: #0D47A1;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* 🔵 INPUT GROUPS */
+.input-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 2px solid #E3EAF3;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: #F5F9FF;
+  /* Soft Background */
+  color: #0D47A1;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #1E88E5;
+  /* Accent Blue */
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+  background: #FFFFFF;
+}
+
+.input-group input:disabled {
+  background: #F5F9FF;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 🔵 UPDATE BUTTONS */
+.btn-update {
+  background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+  /* Accent → Secondary */
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.3);
+  flex-shrink: 0;
+}
+
+.btn-update:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(30, 136, 229, 0.4);
+}
+
+.btn-update:disabled {
+  background: #E3EAF3;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 🔵 DANGER BUTTONS (Terminate) */
+.btn-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  /* Red Gradient */
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+}
+
+/* 🔵 VIEW BUTTONS (Attendance) */
+.btn-view {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  /* Green Gradient for variety/distinction */
+  color: #FFFFFF;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.btn-view:hover {
+  background: linear-gradient(135deg, #047857 0%, #065F46 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+}
+
+/* 🔵 SECONDARY BUTTONS (Cancel) */
+.btn-secondary {
+  background: #F3F4F6;
+  color: #4B5563;
+  border: 1px solid #E5E7EB;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: #E5E7EB;
+  color: #1F2937;
+}
+
+/* 🔵 CURRENT VALUE */
+.current-value {
+  font-size: 0.85rem;
+  color: #6B7280;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 🔵 RESPONSIVE - Maintains card size */
+@media (max-width: 768px) {
+  .employee-card {
+    padding: 1.5rem;
+  }
+
+  .input-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .btn-update {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .employee-card {
+    padding: 1.25rem;
+  }
+
+  .employee-header h3 {
+    font-size: 1.15rem;
+  }
+}
+
+/* 🔵 ANIMATIONS */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.employee-card {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* 🔵 FOCUS ACCESSIBILITY */
+.btn-update:focus,
+input:focus {
+  outline: 2px solid #1E88E5;
+  outline-offset: 2px;
+}
+
+/* 🔵 SMOOTH TRANSITIONS */
+/* 🔵 SMOOTH TRANSITIONS */
+* {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 🔵 ATTENDANCE MODAL - Modular & Themed */
+.attendance-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(13, 71, 161, 0.4);
+  /* Primary Blue Overlay with opacity */
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.attendance-modal-content {
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.attendance-modal-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid #F5F9FF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #0D47A1;
+  font-weight: 700;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #9CA3AF;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #EF4444;
+}
+
+.attendance-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  background: #FAFBFF;
+  /* Very slight blue tint */
+}
+
+.attendance-modal-footer {
+  padding: 1rem 1.5rem;
+  background: #F5F9FF;
+  border-top: 1px solid #E3EAF3;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #1565C0;
+  font-weight: 500;
+}
+
+/* Spinner for loading */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #E3EAF3;
+  border-top: 4px solid #1E88E5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+  .attendance-modal-content {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    max-width: 100%;
+  }
+
+  .modal-title {
+    font-size: 1.2rem;
+  }
+}
