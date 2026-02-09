@@ -179,7 +179,7 @@ const EmployeeCard = ({ employee, onUpdate }) => {
         {/* Attendance Graph Modal Trigger */}
         <div className="mt-4 pt-4 border-t">
           <button
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition flex items-center justify-center gap-2"
+            className="btn-view"
             onClick={() => setShowAttendanceModal(true)}
           >
             <span>📊</span> View Attendance Graph

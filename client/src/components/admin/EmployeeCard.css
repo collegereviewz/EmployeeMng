@@ -165,9 +165,10 @@
 }
 
 /* 🔵 VIEW BUTTONS (Attendance) */
+/* 🔵 VIEW BUTTONS (Attendance) */
 .btn-view {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  /* Green Gradient for variety/distinction */
+  background: linear-gradient(135deg, #1565C0 0%, #1E88E5 100%);
+  /* Matches Navbar Blue */
   color: #FFFFFF;
   border: none;
   padding: 12px 18px;
@@ -181,13 +182,13 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.3);
 }
 
 .btn-view:hover {
-  background: linear-gradient(135deg, #047857 0%, #065F46 100%);
+  background: linear-gradient(135deg, #0D47A1 0%, #1565C0 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 4px 15px rgba(21, 101, 192, 0.4);
 }
 
 /* 🔵 SECONDARY BUTTONS (Cancel) */
