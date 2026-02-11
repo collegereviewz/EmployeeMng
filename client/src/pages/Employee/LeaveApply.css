@@ -426,3 +426,26 @@
 .ems-textarea::-webkit-scrollbar-thumb:hover {
     background: #1565C0;
 }
+
+/* CL Note */
+/* CL Note */
+.cl-entitlement-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    border-left: 4px solid #0ea5e9;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.ems-sidebar-calendar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #E3EAF3;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}

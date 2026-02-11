@@ -17,6 +17,10 @@ export const getAllEmployees = async () => {
   return await apiRequest('/admin/employees');
 };
 
+export const getEmployeeById = async (id) => {
+  return await apiRequest(`/admin/employees/${id}`);
+};
+
 export const getAllEmployeesForUser = async () => {
   return await apiRequest('/employee/peers');
 };
@@ -86,4 +90,34 @@ export const terminateEmployee = async (userId, reason) => {
     method: 'PUT',
     body: JSON.stringify({ reason })
   });
+};
+
+export const promoteEmployee = async (userId, designation) => {
+  return await apiRequest(`/admin/employees/${userId}/promote`, {
+    method: 'PUT',
+    body: JSON.stringify({ designation })
+  });
+};
+
+export const getHolidays = async () => {
+  return await apiRequest('/holidays');
+};
+
+export const getAttendanceStats = async () => {
+  return await apiRequest('/admin/stats');
+};
+
+export const paySalary = async (data) => {
+  return await apiRequest('/admin/payroll/pay', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+};
+
+export const getPayrollStatus = async (month, year) => {
+  return await apiRequest(`/admin/payroll/status?month=${month}&year=${year}`);
+};
+
+export const getEmployeePayrollHistory = async (employeeId) => {
+  return await apiRequest(`/admin/payroll/history/${employeeId}`);
 };

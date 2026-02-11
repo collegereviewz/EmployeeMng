@@ -25,69 +25,72 @@ const Layout = ({ children }) => {
     <div className="layout">
       <nav className="navbar">
         <div className="nav-container">
-  {/* ✅ Logo + Text as ONE clickable brand unit */}
-  <div className="nav-brand-container">
-    <img src="/logo6.png" alt="CollegeReviewZ" className="nav-logo" />
-    <span className="nav-brand-text">CollegeReviewZ EMS</span>
-  </div>
-  
-  <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
-    <span className="hamburger-line"></span>
-    <span className="hamburger-line"></span>
-    <span className="hamburger-line"></span>
-  </button>
+          {/* ✅ Logo + Text as ONE clickable brand unit */}
+          <div className="nav-brand-container">
+            <img src="/logo6.png" alt="CollegeReviewZ" className="nav-logo" />
+            <span className="nav-brand-text">CollegeReviewZ EMS</span>
+          </div>
 
-  <div className={`nav-menu ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-    {user && (
-      <>
-        <div className="nav-links">
-          {user.role === 'admin' && (
-            <>
-              <Link to="/admin/employees" className="nav-link" onClick={closeMobileMenu}>
-                Employees
-              </Link>
-              <Link to="/admin/tasks" className="nav-link" onClick={closeMobileMenu}>
-                Tasks
-              </Link>
-              <Link to="/admin/leaves" className="nav-link" onClick={closeMobileMenu}>
-                Leaves
-              </Link>
-            </>
-          )}
-          {user.role === 'employee' && (
-            <>
-              <Link to="/employee/dashboard" className="nav-link" onClick={closeMobileMenu}>
-                Dashboard
-              </Link>
-              <Link to="/employee/tasks" className="nav-link" onClick={closeMobileMenu}>
-                My Tasks
-              </Link>
-              <Link to="/employee/leaves" className="nav-link" onClick={closeMobileMenu}>
-                Leaves
-              </Link>
-            </>
-          )}
-        </div>
-
-        <div className="nav-right">
-          <Link to="/me/change-password" className="nav-link" onClick={closeMobileMenu}>
-            Change Password
-          </Link>
-          <span className="nav-user">Welcome, {user.name}</span>
-          <button 
-            onClick={(e) => {
-              handleLogout();
-              closeMobileMenu();
-            }} 
-            className="btn-logout"
-          >
-            Logout
+          <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
+            <span className="hamburger-line"></span>
           </button>
+
+          <div className={`nav-menu ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+            {user && (
+              <>
+                <div className="nav-links">
+                  {user.role === 'admin' && (
+                    <>
+                      <Link to="/admin/dashboard" className="nav-link" onClick={closeMobileMenu}>
+                        Dashboard
+                      </Link>
+                      <Link to="/admin/employees" className="nav-link" onClick={closeMobileMenu}>
+                        Employees
+                      </Link>
+                      <Link to="/admin/tasks" className="nav-link" onClick={closeMobileMenu}>
+                        Tasks
+                      </Link>
+                      <Link to="/admin/leaves" className="nav-link" onClick={closeMobileMenu}>
+                        Leaves
+                      </Link>
+                    </>
+                  )}
+                  {user.role === 'employee' && (
+                    <>
+                      <Link to="/employee/dashboard" className="nav-link" onClick={closeMobileMenu}>
+                        Dashboard
+                      </Link>
+                      <Link to="/employee/tasks" className="nav-link" onClick={closeMobileMenu}>
+                        My Tasks
+                      </Link>
+                      <Link to="/employee/leaves" className="nav-link" onClick={closeMobileMenu}>
+                        Leaves
+                      </Link>
+                    </>
+                  )}
+                </div>
+
+                <div className="nav-right">
+                  <Link to="/me/change-password" className="nav-link" onClick={closeMobileMenu}>
+                    Change Password
+                  </Link>
+                  <span className="nav-user">Welcome, {user.name}</span>
+                  <button
+                    onClick={(e) => {
+                      handleLogout();
+                      closeMobileMenu();
+                    }}
+                    className="btn-logout"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </>
-    )}
-  </div> 
-</div>
 
       </nav>
       <main className="main-content">{children}</main>

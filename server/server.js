@@ -7,6 +7,7 @@ import { Server as SocketServer } from 'socket.io'; // Keeping for other notific
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import employeeRoutes from './routes/employee.js';
+import holidayRoutes from './routes/holidayRoutes.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use(cors({
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/employee', employeeRoutes);
+app.use('/api/holidays', holidayRoutes);
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/employee_management', {

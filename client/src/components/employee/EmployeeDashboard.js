@@ -23,28 +23,8 @@ const EmployeeDashboard = () => {
 
   const calculateDateRange = () => {
     const now = new Date();
-    let startMonth = now.getMonth();
-    let startYear = now.getFullYear();
-
-    // If today is before 15th, cycle started previous month 15th
-    if (now.getDate() < 15) {
-      startMonth -= 1;
-      if (startMonth < 0) {
-        startMonth = 11;
-        startYear -= 1;
-      }
-    }
-
-    const start = new Date(startYear, startMonth, 15);
-    // End is next month 14th
-    let endMonth = startMonth + 1;
-    let endYear = startYear;
-    if (endMonth > 11) {
-      endMonth = 0;
-      endYear += 1;
-    }
-    const end = new Date(endYear, endMonth, 14, 23, 59, 59);
-
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
     return { start, end };
   };
 

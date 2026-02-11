@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { createEmployee } from '../../services/adminService';
 import './CreateEmployeeModal.css';
@@ -7,7 +8,9 @@ const CreateEmployeeModal = ({ onClose, onSuccess }) => {
     name: '',
     email: '',
     salary: '',
-    workHours: ''
+    workHours: '',
+    employeeType: 'Full Time',
+    designation: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,7 +33,9 @@ const CreateEmployeeModal = ({ onClose, onSuccess }) => {
         name: formData.name,
         email: formData.email,
         salary: formData.salary ? parseFloat(formData.salary) : 0,
-        workHours: formData.workHours ? parseFloat(formData.workHours) : 8
+        workHours: formData.workHours ? parseFloat(formData.workHours) : 8,
+        employeeType: formData.employeeType,
+        designation: formData.designation
       });
       setCreatedEmployee(result.employee);
     } catch (err) {
@@ -111,6 +116,28 @@ const CreateEmployeeModal = ({ onClose, onSuccess }) => {
                 min="0"
                 max="24"
                 step="0.5"
+              />
+            </div>
+            <div className="form-group">
+              <label>Employee Type</label>
+              <select
+                name="employeeType"
+                value={formData.employeeType}
+                onChange={handleChange}
+              >
+                <option value="Full Time">Full Time</option>
+                <option value="Intern">Intern</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Designation</label>
+              <input
+                type="text"
+                name="designation"
+                value={formData.designation}
+                onChange={handleChange}
+                placeholder="e.g. Software Engineer"
               />
             </div>
           </div>

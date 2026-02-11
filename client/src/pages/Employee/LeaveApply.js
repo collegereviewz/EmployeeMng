@@ -1,4 +1,4 @@
-// LeaveApply.js - Pure Logic & Architecture (100% Unchanged)
+// LeaveApply.js - Pure Logic & Architecture
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,6 +13,7 @@ import {
   CalendarDays
 } from 'lucide-react';
 import { applyLeave } from '../../services/leaveService';
+import BeautifulCalendar from '../../components/common/BeautifulCalendar';
 import './LeaveApply.css';
 
 const LeaveApply = () => {
@@ -160,6 +161,18 @@ const LeaveApply = () => {
 
           {/* Side Info Panel */}
           <div className="ems-sidebar">
+            {/* CL Note */}
+            <div className="cl-entitlement-note">
+              <Info size={18} />
+              <span>Note: You are entitled to <strong>1 Casual Leave (CL)</strong> per month.</span>
+            </div>
+
+            {/* Calendar */}
+            <div className="ems-sidebar-calendar-card">
+              <h3 className="text-lg font-semibold mb-3 text-gray-700">Holiday Calendar</h3>
+              <BeautifulCalendar />
+            </div>
+
             <div className="ems-summary-card">
               <CalendarDays />
               <h3>Request Summary</h3>

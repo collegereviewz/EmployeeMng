@@ -65,36 +65,7 @@ const TimeGraph = ({ entries, startDate, endDate }) => {
 
     const data = processData();
 
-    const formatTimeAxis = (decimal) => {
-        if (decimal === null || decimal === undefined) return '';
-        const hours = Math.floor(decimal);
-        const minutes = Math.round((decimal - hours) * 60);
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        const formattedHours = hours % 12 || 12;
-        return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
-    };
 
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            const dataPoint = payload[0].payload;
-            return (
-                <div className="custom-tooltip bg-white p-3 border border-gray-200 shadow-xl rounded-lg" style={{ zIndex: 100 }}>
-                    <p className="label font-bold text-gray-800 mb-2">{`Date: ${dataPoint.fullDate}`}</p>
-                    {payload.map((p, index) => (
-                        <p key={index} style={{ color: p.color, marginBottom: '4px', fontWeight: 500 }}>
-                            {`${p.name}: ${formatTimeAxis(p.value)}`}
-                        </p>
-                    ))}
-                    {dataPoint.duration && (
-                        <p className="mt-2 pt-2 border-t border-gray-100 text-sm font-bold text-blue-800">
-                            Duration: {dataPoint.duration} hrs
-                        </p>
-                    )}
-                </div>
-            );
-        }
-        return null;
-    };
 
     return (
         <div style={{ width: '100%', height: 400, marginTop: '20px', padding: '20px', background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
@@ -119,8 +90,8 @@ const TimeGraph = ({ entries, startDate, endDate }) => {
                         label={{ value: 'Time (24h)', angle: -90, position: 'insideLeft' }}
                         allowDataOverflow={true}
                     />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
+                    <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '50px' }} />
                     <Line
                         type="monotone"
                         dataKey="clockIn"
@@ -143,6 +114,38 @@ const TimeGraph = ({ entries, startDate, endDate }) => {
             </ResponsiveContainer>
         </div>
     );
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const dataPoint = payload[0].payload;
+        // Helper to format time for tooltip since it's outside main component now
+        const formatTimeAxis = (decimal) => {
+            if (decimal === null || decimal === undefined) return '';
+            const hours = Math.floor(decimal);
+            const minutes = Math.round((decimal - hours) * 60);
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+        };
+
+        return (
+            <div className="custom-tooltip bg-white p-3 border border-gray-200 shadow-xl rounded-lg" style={{ zIndex: 1000, position: 'relative', pointerEvents: 'none' }}>
+                <p className="label font-bold text-gray-800 mb-2">{`Date: ${dataPoint.fullDate}`}</p>
+                {payload.map((p, index) => (
+                    <p key={index} style={{ color: p.color, marginBottom: '4px', fontWeight: 500 }}>
+                        {`${p.name}: ${formatTimeAxis(p.value)}`}
+                    </p>
+                ))}
+                {dataPoint.duration && (
+                    <p className="mt-2 pt-2 border-t border-gray-100 text-sm font-bold text-blue-800">
+                        Duration: {dataPoint.duration} hrs
+                    </p>
+                )}
+            </div>
+        );
+    }
+    return null;
 };
 
 export default TimeGraph;

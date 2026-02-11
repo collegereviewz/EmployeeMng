@@ -443,3 +443,39 @@
     outline: 2px solid #1E88E5;
     outline-offset: 2px;
 }
+
+/* 🔵 NEW LAYOUT: Calendar Sidebar */
+.ems-content-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+    .ems-content-layout {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .ems-calendar-sidebar {
+        width: 350px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .ems-leaves-list {
+        flex: 1;
+        min-width: 0;
+        /* Prevents flex overflow */
+    }
+}
+
+/* Make calendar card-like */
+.ems-calendar-sidebar {
+    background: white;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 1px solid #E3EAF3;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}

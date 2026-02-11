@@ -21,7 +21,9 @@ const createEmployee = async (employeeData) => {
     password,
     role: 'employee',
     salary: salary || 0,
-    workHours: workHours || 8
+    workHours: workHours || 8,
+    employeeType: employeeData.employeeType || 'Full Time',
+    designation: employeeData.designation || 'Employee'
   });
 
   await employee.save();
@@ -150,6 +152,25 @@ const terminateEmployee = async (userId, reason) => {
   return { id: user._id, email: user.email, status: user.status };
 };
 
+const promoteEmployee = async (userId, newDesignation, promotedBy) => {
+  if (!newDesignation) throw new Error('New designation is required');
+
+  const user = await User.findById(userId);
+  if (!user) throw new Error('User not found');
+
+  // Add to history
+  user.promotionHistory.push({
+    designation: user.designation,
+    date: new Date(),
+    promotedBy
+  });
+
+  user.designation = newDesignation;
+  await user.save();
+
+  return user;
+};
+
 export {
   createEmployee,
   getAllEmployees,
@@ -158,5 +179,7 @@ export {
   updateEmployeeWorkHours,
   changePassword,
   changeOwnPassword,
-  terminateEmployee
+
+  terminateEmployee,
+  promoteEmployee
 };

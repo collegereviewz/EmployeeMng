@@ -33,9 +33,34 @@
 }
 
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dashboard-card {
+  flex: 1;
+  min-width: 0;
+  /* Prevents flex items from overflowing */
+}
+
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    flex-wrap: wrap;
+  }
+
+  .dashboard-card {
+    flex: 1 1 calc(50% - 1.5rem);
+    /* 2 per row */
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-card {
+    flex: 1 1 100%;
+    /* 1 per row */
+  }
 }
 
 /* Card Styling */

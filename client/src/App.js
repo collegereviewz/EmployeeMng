@@ -18,33 +18,14 @@ import ChangePassword from './pages/Common/ChangePassword';
 import LeavesAdmin from './pages/Admin/LeavesAdmin';
 import MeetingsAdmin from './pages/Admin/MeetingsAdmin';
 import CreateMeeting from './pages/Admin/CreateMeeting';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import AdminEmployeeView from './pages/Admin/AdminEmployeeView';
+import SalarySlipPrint from './pages/Admin/SalarySlipPrint';
+
 import './App.css';
 
 function App() {
-  React.useEffect(() => {
-    const handleContextMenu = (e) => {
-      e.preventDefault();
-    };
-
-    const handleKeyDown = (e) => {
-      // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-        (e.ctrlKey && e.key === 'U')
-      ) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  // Dev tools restriction removed as per user request
 
   return (
     <AuthProvider>
@@ -52,11 +33,31 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route
+            path="/admin/dashboard"
+            element={
+              <PrivateRoute requiredRole="admin">
+                <Layout>
+                  <AdminDashboard />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/admin/employees"
             element={
               <PrivateRoute requiredRole="admin">
                 <Layout>
                   <EmployeeList />
+                </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin/employees/:id"
+            element={
+              <PrivateRoute requiredRole="admin">
+                <Layout>
+                  <AdminEmployeeView />
                 </Layout>
               </PrivateRoute>
             }
@@ -173,6 +174,14 @@ function App() {
             }
           />
           <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route
+            path="/admin/print-slip/:employeeId/:month/:year"
+            element={
+              <PrivateRoute requiredRole="admin">
+                <SalarySlipPrint />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>

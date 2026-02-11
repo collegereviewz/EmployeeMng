@@ -46,7 +46,7 @@ npm run create-admin
 
 This will create:
 - **Email:** admin@example.com
-- **Password:** admin123
+- **Password:** .25
 
 ⚠️ **Important:** Change this password after first login!
 

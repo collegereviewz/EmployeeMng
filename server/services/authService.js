@@ -17,6 +17,10 @@ export const login = async (email, password) => {
     throw new Error('Invalid credentials');
   }
 
+  if (user.status === 'terminated') {
+    throw new Error('Account terminated. Please contact administration.');
+  }
+
   const isMatch = await user.comparePassword(password);
   if (!isMatch) {
     throw new Error('Invalid credentials');

@@ -29,6 +29,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  employeeType: {
+    type: String,
+    enum: ['Intern', 'Full Time', 'Contract'],
+    default: 'Full Time'
+  },
+  designation: {
+    type: String,
+    default: 'Employee'
+  },
+  promotionHistory: [{
+    designation: String,
+    date: {
+      type: Date,
+      default: Date.now
+    },
+    promotedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  }],
   salary: {
     type: Number,
     default: 0
