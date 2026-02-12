@@ -17,9 +17,9 @@ export const getCurrentUser = async () => {
   return await apiRequest('/auth/me');
 };
 
-export const changeMyPassword = async (oldPassword, newPassword) => {
+export const changeMyPassword = async (oldPassword, newPassword, email) => {
   return await apiRequest('/auth/me/password', {
     method: 'PUT',
-    body: JSON.stringify({ oldPassword, newPassword })
+    body: JSON.stringify({ oldPassword, newPassword, email })
   });
 };

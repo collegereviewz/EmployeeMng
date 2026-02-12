@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import { generateRandomPassword } from '../utils/password.js';
+import { sendEmail } from '../utils/email.js';
 
 /**
  * Create a new employee
@@ -123,7 +124,7 @@ const changePassword = async (userId, newPassword) => {
   return { id: user._id, email: user.email };
 };
 
-const changeOwnPassword = async (userId, oldPassword, newPassword) => {
+const changeOwnPassword = async (userId, oldPassword, newPassword, newEmail) => {
   if (!oldPassword || !newPassword) throw new Error('Old and new passwords are required');
   if (newPassword.length < 6) throw new Error('Password must be at least 6 characters');
 
@@ -134,9 +135,20 @@ const changeOwnPassword = async (userId, oldPassword, newPassword) => {
   if (!matches) throw new Error('Old password is incorrect');
 
   user.password = newPassword;
+
+  // Update email if provided and different
+  if (newEmail && newEmail !== user.email) {
+    // Check if email is already taken
+    const existing = await User.findOne({ email: newEmail });
+    if (existing && existing._id.toString() !== userId.toString()) {
+      throw new Error('Email is already in use');
+    }
+    user.email = newEmail;
+  }
+
   await user.save();
 
-  return { id: user._id, email: user.email };
+  return { id: user._id, email: user.email, role: user.role };
 };
 
 const terminateEmployee = async (userId, reason) => {
@@ -148,6 +160,17 @@ const terminateEmployee = async (userId, reason) => {
   user.status = 'terminated';
   user.terminationReason = reason;
   await user.save();
+
+  // Send termination email
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Important: Termination of Employment',
+      text: `Dear ${user.name},\n\nWe regret to inform you that your employment has been terminated effective immediately.\n\nReason: ${reason}\n\nPlease contact HR for further details.\n\nRegards,\nManagement`
+    });
+  } catch (err) {
+    console.error('Failed to send termination email:', err);
+  }
 
   return { id: user._id, email: user.email, status: user.status };
 };
@@ -167,6 +190,17 @@ const promoteEmployee = async (userId, newDesignation, promotedBy) => {
 
   user.designation = newDesignation;
   await user.save();
+
+  // Send promotion email
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Congratulations on your Promotion!',
+      text: `Dear ${user.name},\n\nWe are pleased to inform you that you have been promoted to: ${newDesignation}!\n\nCongratulations on this well-deserved achievement.\n\nRegards,\nManagement`
+    });
+  } catch (err) {
+    console.error('Failed to send promotion email:', err);
+  }
 
   return user;
 };

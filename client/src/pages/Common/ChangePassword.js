@@ -3,15 +3,27 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Lock, Eye, EyeOff, Loader2, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { changeMyPassword } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 import './ChangePassword.css';
 
 const ChangePassword = () => {
+
+
+  const { user } = useAuth(); // Get current user context
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [email, setEmail] = useState(''); // New state for email
   const [msg, setMsg] = useState({ type: '', text: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  // Initialize email if admin
+  React.useEffect(() => {
+    if (user && user.role === 'admin') {
+      setEmail(user.email || '');
+    }
+  }, [user]);
 
   const navigate = useNavigate();
 
@@ -30,7 +42,8 @@ const ChangePassword = () => {
 
     try {
       setIsSubmitting(true);
-      await changeMyPassword(oldPassword, newPassword);
+      // Pass email if admin, otherwise null/undefined
+      await changeMyPassword(oldPassword, newPassword, user?.role === 'admin' ? email : undefined);
       setMsg({ type: 'success', text: 'Security updated! Redirecting to home...' });
       setTimeout(() => navigate('/'), 1200);
     } catch (err) {
@@ -102,6 +115,28 @@ const ChangePassword = () => {
                 value={oldPassword}
                 setter={setOldPassword}
               />
+
+              {user && user.role === 'admin' && (
+                <>
+                  <div className="ems-divider" />
+                  <div className="ems-input-group">
+                    <label className="ems-label">Email Address (Admin)</label>
+                    <div className="ems-input-wrapper">
+                      <div className="ems-input-icon">
+                        <ShieldCheck size={18} />
+                      </div>
+                      <input
+                        type="email"
+                        placeholder="admin@example.com"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        className="ems-input-field"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
 
               <div className="ems-divider" />
 

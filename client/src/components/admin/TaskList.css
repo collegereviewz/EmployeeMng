@@ -250,6 +250,43 @@
   flex-shrink: 0;
 }
 
+/* Checkbox List Styling */
+.checkbox-list {
+  border: 2px solid #E3EAF3;
+  border-radius: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  background: #F5F9FF;
+  padding: 0.5rem;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.checkbox-item:hover {
+  background: #E3EAF3;
+}
+
+.checkbox-item input[type="checkbox"] {
+  width: auto;
+  margin-right: 0.75rem;
+  cursor: pointer;
+}
+
+.checkbox-item label {
+  margin: 0;
+  cursor: pointer;
+  font-weight: 400;
+  color: #0D47A1;
+  font-size: 0.95rem;
+}
+
 /* ===========================================
    PERFECT RESPONSIVE BREAKPOINTS
 =========================================== */
