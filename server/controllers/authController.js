@@ -36,10 +36,10 @@ const getCurrentUser = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { oldPassword, newPassword, email } = req.body;
+    const { oldPassword, newPassword } = req.body;
     if (!oldPassword || !newPassword) return res.status(400).json({ message: 'Old and new passwords are required' });
 
-    const result = await (await import('../services/employeeService.js')).changeOwnPassword(req.user._id, oldPassword, newPassword, email);
+    const result = await (await import('../services/employeeService.js')).changeOwnPassword(req.user._id, oldPassword, newPassword);
     res.json({ message: 'Password changed', user: result });
   } catch (error) {
     if (error.message === 'Old password is incorrect' || error.message.startsWith('Password') || error.message === 'User not found') {

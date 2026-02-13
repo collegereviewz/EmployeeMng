@@ -1,10 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './PromotionModal.css';
 
 const PromotionModal = ({ employee, onClose, onPromote }) => {
     const [designation, setDesignation] = useState(employee.designation || '');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+
+    // 👈 NEW: Promotion paths based on current designation
+    const getPromotionOptions = (currentDesignation) => {
+        const lowerDesignation = currentDesignation.toLowerCase();
+
+        if (lowerDesignation.includes('intern') || lowerDesignation.includes('trainee')) {
+            return [
+                'Junior ' + currentDesignation.replace(/Intern|Trainee/i, ''),
+                currentDesignation.replace(/Intern|Trainee/i, ''),
+                'Senior ' + currentDesignation.replace(/Intern|Trainee/i, ''),
+                'Lead ' + currentDesignation.replace(/Intern|Trainee/i, '')
+            ];
+        }
+
+        if (lowerDesignation.includes('software engineer') || lowerDesignation.includes('developer')) {
+            return [
+                'Software Engineer',
+                'Senior Software Engineer',
+                'Staff Software Engineer',
+                'Principal Engineer'
+            ];
+        }
+
+        if (lowerDesignation.includes('data analyst')) {
+            return [
+                'Junior Data Analyst',
+                'Data Analyst',
+                'Senior Data Analyst',
+                'Lead Analyst'
+            ];
+        }
+
+        if (lowerDesignation.includes('junior')) {
+            return [
+                currentDesignation.replace('Junior ', ''),
+                'Senior ' + currentDesignation.replace('Junior ', ''),
+                'Lead ' + currentDesignation.replace('Junior ', ''),
+                'Principal ' + currentDesignation.replace('Junior ', '')
+            ];
+        }
+
+        // Generic promotion path
+        return [
+            currentDesignation,
+            'Senior ' + currentDesignation,
+            'Lead ' + currentDesignation,
+            'Principal ' + currentDesignation
+        ];
+    };
+
+    // 👈 NEW: Set first promotion option automatically
+    useEffect(() => {
+        if (employee.designation && !designation) {
+            const options = getPromotionOptions(employee.designation);
+            setDesignation(options[0] || '');
+        }
+    }, [employee.designation]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -25,6 +82,8 @@ const PromotionModal = ({ employee, onClose, onPromote }) => {
         }
     };
 
+    const promotionOptions = getPromotionOptions(employee.designation || '');
+
     return (
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -44,16 +103,22 @@ const PromotionModal = ({ employee, onClose, onPromote }) => {
                         />
                     </div>
 
+                    {/* 👈 CHANGED: Input → Select with auto-options */}
                     <div className="form-group">
                         <label>New Designation *</label>
-                        <input
-                            type="text"
+                        <select
                             value={designation}
                             onChange={(e) => setDesignation(e.target.value)}
-                            placeholder="e.g. Senior Software Developer"
+                            className="form-select"
                             required
                             autoFocus
-                        />
+                        >
+                            {promotionOptions.map((option, index) => (
+                                <option key={index} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
                     </div>
 
                     <div className="modal-actions">

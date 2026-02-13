@@ -54,7 +54,7 @@ const AttendanceStats = () => {
                             <XAxis dataKey="day" label={{ value: 'Day', position: 'insideBottom', offset: -5 }} />
                             <YAxis label={{ value: 'Hours', angle: -90, position: 'insideLeft' }} />
                             <Tooltip />
-                            <Legend />
+                            <Legend wrapperStyle={{ paddingTop: '20px' }} />
                             <Bar dataKey="totalHours" name="Total Hours Worked" fill="#3b82f6" />
                         </BarChart>
                     </ResponsiveContainer>

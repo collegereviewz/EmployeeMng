@@ -20,23 +20,31 @@ const AdminDashboard = () => {
                     <div className="actions-grid">
                         <Link to="/admin/employees" className="action-card">
                             <span className="action-icon">👥</span>
-                            <span className="action-label">Manage Employees</span>
-                            <span className="action-desc">Add, edit, or promote staff</span>
+                            <div className="action-text">
+                                <span className="action-label">Manage Employees</span>
+                                <span className="action-desc">Add, edit, or promote staff</span>
+                            </div>
                         </Link>
                         <Link to="/admin/leaves" className="action-card">
                             <span className="action-icon">📅</span>
-                            <span className="action-label">Leave Requests</span>
-                            <span className="action-desc">Approve or decline leaves</span>
+                            <div className="action-text">
+                                <span className="action-label">Leave Requests</span>
+                                <span className="action-desc">Approve or decline leaves</span>
+                            </div>
                         </Link>
                         <Link to="/admin/tasks" className="action-card">
                             <span className="action-icon">✅</span>
-                            <span className="action-label">Task Management</span>
-                            <span className="action-desc">Assign and track tasks</span>
+                            <div className="action-text">
+                                <span className="action-label">Task Management</span>
+                                <span className="action-desc">Assign and track tasks</span>
+                            </div>
                         </Link>
                         <Link to="/me/change-password" className="action-card">
                             <span className="action-icon">🔐</span>
-                            <span className="action-label">Change Password</span>
-                            <span className="action-desc">Update your security</span>
+                            <div className="action-text">
+                                <span className="action-label">Change Password</span>
+                                <span className="action-desc">Update your security</span>
+                            </div>
                         </Link>
                     </div>
                 </div>

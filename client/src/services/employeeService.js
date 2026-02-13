@@ -57,3 +57,17 @@ export const getTimeEntries = async (month, year, startDate, endDate) => {
 
   return await apiRequest(`/employee/time-entries?${params.toString()}`);
 };
+
+/**
+ * Get salary data
+ */
+export const getSalaryData = async () => {
+  return await apiRequest('/employee/salary');
+};
+
+/**
+ * Get specific payslip
+ */
+export const getPayslip = async (month, year) => {
+  return await apiRequest(`/employee/salary/${year}/${month}`);
+};

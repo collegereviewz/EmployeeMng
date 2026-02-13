@@ -11,7 +11,9 @@ import {
   getMyLeaves,
   getMyMeetings,
   createMeetingForUser,
-  getAllEmployeesForUser
+  getAllEmployeesForUser,
+  getSalaryData,
+  getPayslip
 } from '../controllers/employeeController.js';
 
 const router = express.Router();
@@ -30,6 +32,10 @@ router.get('/dashboard', getDashboard);
 // Task routes
 router.get('/tasks', getTasks);
 router.put('/tasks/:id/status', updateTaskStatus);
+
+// 👈 NEW: Salary routes
+router.get('/salary', getSalaryData);
+router.get('/salary/:year/:month', getPayslip);
 
 // Leaves
 router.post('/leaves', applyLeave);

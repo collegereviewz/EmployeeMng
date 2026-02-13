@@ -13,6 +13,7 @@ import LeaveApply from './pages/Employee/LeaveApply';
 import LeaveList from './pages/Employee/LeaveList';
 import Meetings from './pages/Employee/Meetings';
 import CreateMeetingEmployee from './pages/Employee/CreateMeeting';
+import EmployeePayslipPrint from './pages/Employee/EmployeePayslipPrint';
 import ChangePassword from './pages/Common/ChangePassword';
 
 import LeavesAdmin from './pages/Admin/LeavesAdmin';
@@ -130,6 +131,14 @@ function App() {
                 <Layout>
                   <LeaveList />
                 </Layout>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/employee/salary/print/:month/:year"
+            element={
+              <PrivateRoute requiredRole="employee">
+                <EmployeePayslipPrint />
               </PrivateRoute>
             }
           />

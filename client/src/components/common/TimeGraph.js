@@ -1,14 +1,64 @@
 import React from 'react';
 import {
-    LineChart,
-    Line,
+    BarChart,
+    Bar,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
-    ResponsiveContainer
+    ResponsiveContainer,
+    Cell,
+    ReferenceLine
 } from 'recharts';
+import './TimeGraph.css';
+
+const formatTimeAxis = (decimal) => {
+    if (decimal === null || decimal === undefined) return '';
+    const hours = Math.floor(decimal);
+    const minutes = Math.round((decimal - hours) * 60);
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    return `${formattedHours} ${ampm}`;
+};
+
+const CustomYAxisTick = (props) => {
+    const { x, y, payload } = props;
+    const isBold = payload.value === 10 || payload.value === 19; // 10 AM or 7 PM
+
+    return (
+        <g transform={`translate(${x},${y})`}>
+            <text
+                x={0}
+                y={0}
+                dy={4}
+                textAnchor="end"
+                fill={isBold ? "#1e3a8a" : "#64748b"}
+                fontWeight={isBold ? "700" : "400"}
+                fontSize={12}
+            >
+                {formatTimeAxis(payload.value)}
+            </text>
+        </g>
+    );
+};
+
+const CustomBar = (props) => {
+    const { fill, x, y, width, height, status } = props;
+    if (!height || height === 0) return null;
+
+    return (
+        <rect
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            fill={fill}
+            rx={4}
+            ry={4}
+            className={status === 'Active' ? 'blinking-bar' : ''}
+        />
+    );
+};
 
 const TimeGraph = ({ entries, startDate, endDate }) => {
     // Process data for the chart
@@ -31,31 +81,44 @@ const TimeGraph = ({ entries, startDate, endDate }) => {
             const dateStr = current.toLocaleDateString();
             const entry = entryMap.get(dateStr);
 
-            let clockIn = null;
-            let clockOut = null;
+            let clockInVal = null;
+            let clockOutVal = null;
+            let durationString = '--';
 
             if (entry) {
                 const login = new Date(entry.loginTime);
-                clockIn = login.getHours() + login.getMinutes() / 60;
+                // Convert to decimal hours for Y-axis (e.g., 9:30 AM -> 9.5)
+                clockInVal = login.getHours() + login.getMinutes() / 60;
 
                 if (entry.logoutTime) {
                     const logout = new Date(entry.logoutTime);
-                    clockOut = logout.getHours() + logout.getMinutes() / 60;
+                    clockOutVal = logout.getHours() + logout.getMinutes() / 60;
+                } else if (dateStr === new Date().toLocaleDateString()) {
+                    // If it's today and no logout, assume currently working (optional: max active bar)
+                    const now = new Date();
+                    clockOutVal = now.getHours() + now.getMinutes() / 60;
                 }
             }
 
-            // Calculate duration if both exist
-            let duration = null;
-            if (clockIn !== null && clockOut !== null) {
-                duration = (clockOut - clockIn).toFixed(2);
+            // Calculate duration for display
+            if (clockInVal !== null && clockOutVal !== null) {
+                const dur = clockOutVal - clockInVal;
+                const hours = Math.floor(dur);
+                const minutes = Math.round((dur - hours) * 60);
+                durationString = `${hours}h ${minutes}m`;
             }
+
+            // Create range data [min, max]
+            const timeRange = (clockInVal !== null && clockOutVal !== null) ? [clockInVal, clockOutVal] : null;
 
             data.push({
                 date: current.getDate(),
-                fullDate: dateStr,
-                clockIn: clockIn ? parseFloat(clockIn.toFixed(2)) : null,
-                clockOut: clockOut ? parseFloat(clockOut.toFixed(2)) : null,
-                duration: duration
+                fullDate: current.toLocaleDateString('default', { weekday: 'short', month: 'short', day: 'numeric' }),
+                timeRange: timeRange,
+                clockInRaw: clockInVal,
+                clockOutRaw: clockOutVal,
+                durationDisplay: durationString,
+                status: entry ? (entry.logoutTime ? 'Completed' : 'Active') : 'Absent'
             });
 
             current.setDate(current.getDate() + 1);
@@ -65,63 +128,78 @@ const TimeGraph = ({ entries, startDate, endDate }) => {
 
     const data = processData();
 
-
+    // Calculate minimum width to ensure bars are readable on mobile
+    // Approx 35px per day + padding
+    const minChartWidth = Math.max(600, data.length * 35);
 
     return (
-        <div style={{ width: '100%', height: 400, marginTop: '20px', padding: '20px', background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ marginBottom: '20px', color: '#1a365d', fontSize: '1.2rem', fontWeight: '600' }}>
-                Attendance Graph ({startDate.toLocaleDateString()} - {endDate.toLocaleDateString()})
+        <div className="time-graph-container">
+            <h3 className="time-graph-header">
+                Attendance Timeline ({startDate.toLocaleDateString()} - {endDate.toLocaleDateString()})
             </h3>
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                    data={data}
-                    margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 30,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" label={{ value: 'Day of Month', position: 'insideBottom', offset: -10 }} />
-                    <YAxis
-                        domain={[10, 19]}
-                        tickFormatter={(tick) => `${tick}:00`}
-                        label={{ value: 'Time (24h)', angle: -90, position: 'insideLeft' }}
-                        allowDataOverflow={true}
-                    />
-                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
-                    <Legend verticalAlign="bottom" height={36} wrapperStyle={{ paddingTop: '50px' }} />
-                    <Line
-                        type="monotone"
-                        dataKey="clockIn"
-                        name="Clock In"
-                        stroke="#10b981"
-                        activeDot={{ r: 8 }}
-                        connectNulls={false}
-                        strokeWidth={2}
-                    />
-                    <Line
-                        type="monotone"
-                        dataKey="clockOut"
-                        name="Clock Out"
-                        stroke="#ef4444"
-                        activeDot={{ r: 8 }}
-                        connectNulls={false}
-                        strokeWidth={2}
-                    />
-                </LineChart>
-            </ResponsiveContainer>
+
+            <div className="graph-scroll-wrapper">
+                <div style={{ minWidth: `${minChartWidth}px`, height: '100%' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                            data={data}
+                            margin={{
+                                top: 20,
+                                right: 30,
+                                left: 0,
+                                bottom: 5,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                            <XAxis
+                                dataKey="date"
+                                axisLine={false}
+                                tickLine={false}
+                                tick={{ fill: '#64748b', fontSize: 12 }}
+                                dy={10}
+                            />
+                            <YAxis
+                                type="number"
+                                domain={[7, 21]} // Extended range to ensure 7 PM (19) fits comfortably
+                                ticks={[7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]}
+                                interval={0} // Force show all ticks on all devices
+                                tick={<CustomYAxisTick />}
+                                axisLine={false}
+                                tickLine={false}
+                                allowDataOverflow={false}
+                            />
+                            <Tooltip content={<CustomTooltip formatTime={formatTimeAxis} />} cursor={{ fill: 'rgba(241, 245, 249, 0.6)' }} />
+                            <ReferenceLine y={10} stroke="#bbf7d0" strokeWidth={1} label="" />
+                            <ReferenceLine y={19} stroke="#bbf7d0" strokeWidth={1} label="" />
+                            <Bar
+                                dataKey="timeRange"
+                                barSize={20}
+                                shape={<CustomBar />}
+                            >
+                                {data.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        // Always Green (#10b981) - Active will blink via class
+                                        fill={entry.status === 'Absent' ? 'transparent' : '#10b981'}
+                                        status={entry.status}
+                                    />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            </div>
         </div>
     );
 };
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload, label, formatTime }) => {
     if (active && payload && payload.length) {
         const dataPoint = payload[0].payload;
-        // Helper to format time for tooltip since it's outside main component now
-        const formatTimeAxis = (decimal) => {
-            if (decimal === null || decimal === undefined) return '';
+
+        // Helper specifically for tooltip details
+        const formatTimeDetail = (decimal) => {
+            if (decimal === null || decimal === undefined) return '--:--';
             const hours = Math.floor(decimal);
             const minutes = Math.round((decimal - hours) * 60);
             const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -129,18 +207,32 @@ const CustomTooltip = ({ active, payload, label }) => {
             return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
         };
 
+        // Don't show tooltip for empty data (Absent)
+        if (!dataPoint.timeRange) return null;
+
         return (
-            <div className="custom-tooltip bg-white p-3 border border-gray-200 shadow-xl rounded-lg" style={{ zIndex: 1000, position: 'relative', pointerEvents: 'none' }}>
-                <p className="label font-bold text-gray-800 mb-2">{`Date: ${dataPoint.fullDate}`}</p>
-                {payload.map((p, index) => (
-                    <p key={index} style={{ color: p.color, marginBottom: '4px', fontWeight: 500 }}>
-                        {`${p.name}: ${formatTimeAxis(p.value)}`}
-                    </p>
-                ))}
-                {dataPoint.duration && (
-                    <p className="mt-2 pt-2 border-t border-gray-100 text-sm font-bold text-blue-800">
-                        Duration: {dataPoint.duration} hrs
-                    </p>
+            <div className="custom-tooltip">
+                <div className="tooltip-date">{dataPoint.fullDate}</div>
+
+                <div className="tooltip-row">
+                    <span className="tooltip-label">Clock In:</span>
+                    <span className="tooltip-value">{formatTimeDetail(dataPoint.clockInRaw)}</span>
+                </div>
+
+                {dataPoint.status !== 'Active' && (
+                    <div className="tooltip-row">
+                        <span className="tooltip-label">Clock Out:</span>
+                        <span className="tooltip-value">{formatTimeDetail(dataPoint.clockOutRaw)}</span>
+                    </div>
+                )}
+
+                <div className="tooltip-duration">
+                    Total: {dataPoint.durationDisplay}
+                </div>
+                {dataPoint.status === 'Active' && (
+                    <div style={{ fontSize: '0.75rem', color: '#3b82f6', marginTop: '0.25rem', textAlign: 'right' }}>
+                        Currently Working
+                    </div>
                 )}
             </div>
         );

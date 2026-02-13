@@ -15,15 +15,24 @@
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  /* Changed from flex-start to center for better vertical alignment */
   justify-content: space-between;
   gap: 1.5rem;
+  flex-wrap: wrap;
+  /* Allow wrapping on small screens */
 }
 
 .header-content {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 200px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .page-title {
@@ -42,7 +51,44 @@
   margin: 0;
 }
 
-/* 🔵 PRIMARY BUTTON STYLES (Applies to Add Employee & Assign Task) */
+/* 🔵 SEARCH BAR STYLES */
+.search-container {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 1px solid #E3EAF3;
+  border-radius: 12px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 6px rgba(13, 71, 161, 0.05);
+  transition: all 0.3s ease;
+  min-width: 250px;
+}
+
+.search-container:focus-within {
+  border-color: #1E88E5;
+  box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+}
+
+.search-icon {
+  font-size: 1.1rem;
+  color: #90CAF9;
+  margin-right: 8px;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: #0D47A1;
+  width: 100%;
+  background: transparent;
+}
+
+.search-input::placeholder {
+  color: #90CAF9;
+}
+
+/* 🔵 PRIMARY BUTTON STYLES (Applies to Add Employee) */
 .btn-primary,
 .add-employee-btn {
   background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
@@ -50,7 +96,8 @@
   border: none;
 
   /* KEY CHANGE: Increased padding for bigger button feel */
-  padding: 14px 28px;
+  padding: 14px 24px;
+  /* Slightly adjusted padding */
 
   border-radius: 12px;
   font-weight: 600;
@@ -63,12 +110,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Centers text horizontally */
   gap: 10px;
   /* Space between icon and text */
 
   /* KEY CHANGE: Minimum width to ensure button looks substantial */
-  min-width: 180px;
+  min-width: 160px;
+  /* Slightly reduced min-width to fit multiple buttons */
   white-space: nowrap;
 }
 
@@ -90,14 +137,12 @@
   font-size: 1.2rem;
   font-weight: bold;
   line-height: 1;
-  /* Prevents icon from pushing text down */
 }
 
 /* 🔵 EMPTY STATE BUTTON */
 .empty-btn {
   margin-top: 1.5rem;
   padding: 16px 32px;
-  /* Even bigger for the empty state CTA */
   font-size: 1.1rem;
   min-width: 200px;
 }
@@ -192,28 +237,35 @@
     align-items: stretch;
     gap: 1.5rem;
     padding: 1rem;
-    margin-bottom: 0.75rem;
   }
 
   .header-content {
     text-align: center;
   }
 
+  .header-controls {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: none;
+  }
+
   .add-employee-btn,
   .btn-primary {
     align-self: center;
     width: 100%;
-    max-width: 400px;
+    max-width: none;
+    /* Let them take full width on smaller screens */
   }
 }
 
 @media (max-width: 768px) {
   .employee-list {
     padding: 0.25rem 0.5rem;
-  }
-
-  .page-header {
-    padding: 1rem;
   }
 
   .page-title {
@@ -254,7 +306,8 @@
 /* 🔵 FOCUS STATES */
 .btn-primary:focus,
 .add-employee-btn:focus,
-.nav-link:focus {
+.nav-link:focus,
+.search-container:focus-within {
   outline: 2px solid #1E88E5;
   outline-offset: 2px;
 }

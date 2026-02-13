@@ -103,7 +103,9 @@ const EmployeeDashboard = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="dashboard-grid">
+      {/* TOP ROW - 3 EQUAL COLUMNS: Personal | Time | Stats */}
+      <div className="top-row">
+        {/* Personal Information */}
         <div className="dashboard-card info-card">
           <h2>Personal Information</h2>
           <div className="info-item">
@@ -124,9 +126,15 @@ const EmployeeDashboard = () => {
           </div>
         </div>
 
+        {/* Time Tracking */}
         <div className="dashboard-card clock-card">
           <h2>Time Tracking</h2>
-          <iframe src="https://free.timeanddate.com/clock/ia9v6q4x/n54/szw110/szh110/hoc09f/hbw0/hfc09f/cf100/hnce1ead6/fas30/fdi66/mqc000/mql15/mqw4/mqd98/mhc000/mhl15/mhw4/mhd98/mmc000/mml10/mmw1/mmd98/hhs2/hms2/hsv0" frameBorder="0" width="110" height="110"></iframe>
+          <iframe
+            src="https://free.timeanddate.com/clock/ia9v6q4x/n54/szw110/szh110/hoc09f/hbw0/hfc09f/cf100/hnce1ead6/fas30/fdi66/mqc000/mql15/mqw4/mqd98/mhc000/mhl15/mhw4/mhd98/mmc000/mml10/mmw1/mmd98/hhs2/hms2/hsv0"
+            frameBorder="0"
+            width="110"
+            height="110"
+          />
           <div className="clock-status">
             {isClockedIn ? (
               <div className="clocked-in">
@@ -154,7 +162,7 @@ const EmployeeDashboard = () => {
           </div>
         </div>
 
-
+        {/* Monthly Statistics */}
         <div className="dashboard-card stats-card">
           <h2>Monthly Statistics</h2>
           <div className="stat-item">
@@ -172,7 +180,10 @@ const EmployeeDashboard = () => {
             </span>
           </div>
         </div>
+      </div>
 
+      {/* BOTTOM ROW - Full Width Tasks */}
+      <div className="bottom-row">
         <div className="dashboard-card tasks-card">
           <h2>Recent Tasks</h2>
           {tasks && tasks.length > 0 ? (

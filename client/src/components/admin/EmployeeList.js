@@ -6,9 +6,11 @@ import './EmployeeList.css';
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Payroll State
   const [payrollStatus, setPayrollStatus] = useState({});
@@ -20,11 +22,16 @@ const EmployeeList = () => {
     loadPayrollStatus();
   }, [currentMonth, currentYear]); // Reload when month/year changes
 
+  useEffect(() => {
+    filterEmployees();
+  }, [searchQuery, employees]);
+
   const loadEmployees = async () => {
     try {
       setLoading(true);
       const data = await getAllEmployees();
       setEmployees(data);
+      setFilteredEmployees(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,6 +56,23 @@ const EmployeeList = () => {
     }
   };
 
+  const filterEmployees = () => {
+    if (!searchQuery.trim()) {
+      setFilteredEmployees(employees);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = employees.filter(employee =>
+      (employee.name && employee.name.toLowerCase().includes(query)) ||
+      (employee.email && employee.email.toLowerCase().includes(query)) ||
+      (employee.employeeId && employee.employeeId.toLowerCase().includes(query)) ||
+      (employee.department && employee.department.toLowerCase().includes(query)) ||
+      (employee.designation && employee.designation.toLowerCase().includes(query))
+    );
+    setFilteredEmployees(filtered);
+  };
+
   const handleEmployeeCreated = () => {
     setShowModal(false);
     loadEmployees();
@@ -62,6 +86,8 @@ const EmployeeList = () => {
     }));
   };
 
+
+
   if (loading && employees.length === 0) {
     return (
       <div className="employee-list loading-container">
@@ -70,18 +96,26 @@ const EmployeeList = () => {
     );
   }
 
-
-
   return (
     <div className="employee-list">
       <div className="page-header">
         <div className="header-content">
           <h1 className="page-title">Employee Management</h1>
-          <p className="employee-count">{employees.length} employees</p>
+          <p className="employee-count">{filteredEmployees.length} employees found</p>
         </div>
 
         <div className="header-controls">
-          {/* Month Filter removed as per user request */}
+          {/* Search Input */}
+          <div className="search-container">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search employees..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-input"
+            />
+          </div>
 
           <button
             onClick={() => setShowModal(true)}
@@ -102,18 +136,23 @@ const EmployeeList = () => {
       )}
 
       <div className="employee-grid">
-        {employees.length === 0 ? (
+        {filteredEmployees.length === 0 ? (
           <div className="empty-state">
-            {/* ... empty state ... */}
             <div className="empty-icon">👥</div>
             <h3>No employees found</h3>
-            <p>Add your first employee to get started</p>
-            <button onClick={() => setShowModal(true)} className="btn-primary empty-btn">
-              Add First Employee
-            </button>
+            {searchQuery ? (
+              <p>No employees match your search query "{searchQuery}"</p>
+            ) : (
+              <>
+                <p>Add your first employee to get started</p>
+                <button onClick={() => setShowModal(true)} className="btn-primary empty-btn">
+                  Add First Employee
+                </button>
+              </>
+            )}
           </div>
         ) : (
-          employees.map((employee) => (
+          filteredEmployees.map((employee) => (
             <EmployeeCard
               key={employee._id}
               employee={employee}

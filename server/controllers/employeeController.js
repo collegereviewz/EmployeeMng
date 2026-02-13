@@ -135,6 +135,109 @@ const getMyLeaves = async (req, res) => {
   }
 };
 
+/**
+ * 👈 NEW: Get salary data for current employee
+ */
+// Import Payroll model
+import Payroll from '../models/Payroll.js';
+import User from '../models/User.js';
+
+/**
+ * 👈 NEW: Get salary data for current employee
+ */
+const getSalaryData = async (req, res) => {
+  try {
+    const employeeId = req.user._id;
+    const user = await User.findById(employeeId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // 1. Fetch Payroll History (Payslips)
+    const payrolls = await Payroll.find({ employee: employeeId }).sort({ year: -1, month: -1 });
+
+    const payslips = payrolls.map(p => {
+      const monthName = new Date(0, p.month - 1).toLocaleString('default', { month: 'long' }).toUpperCase();
+      return {
+        _id: p._id,
+        name: `${user.name} ${monthName} ${p.year} PAYSLIP`,
+        month: new Date(p.year, p.month - 1),
+        // Direct link to the print view
+        fileUrl: `/employee/salary/print/${p.month}/${p.year}`
+      };
+    });
+
+    // 2. Format Promotions
+    const promotions = user.promotionHistory.map((promo, index) => ({
+      _id: promo._id || index,
+      title: `Promoted to ${promo.designation}`,
+      date: promo.date,
+      newSalary: user.salary, // Current salary (history not stored in simple model, using current)
+      position: promo.designation,
+      reason: 'Performance Review' // Placeholder as reason isn't in model
+    })).reverse();
+
+    // 3. Termination Details
+    let termination = null;
+    if (user.status === 'terminated') {
+      termination = {
+        reason: user.terminationReason,
+        date: new Date() // You might want to store terminationDate in model if not present, using current date as fallback or if stored
+      };
+    }
+
+    // 4. Current Salary Info
+    const currentSalary = {
+      amount: user.salary,
+      position: user.designation,
+      effectiveDate: user.createdAt // Using join date as effective date fallback
+    };
+
+    const salaryData = {
+      currentSalary,
+      payslips,
+      promotions,
+      termination
+    };
+
+    res.json(salaryData);
+  } catch (error) {
+    console.error('Get salary data error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+/**
+ * Get specific payslip data
+ */
+const getPayslip = async (req, res) => {
+  try {
+    const { year, month } = req.params;
+    const employeeId = req.user._id;
+
+    const payroll = await Payroll.findOne({
+      employee: employeeId,
+      year: parseInt(year),
+      month: parseInt(month)
+    });
+
+    if (!payroll) {
+      return res.status(404).json({ message: 'Payslip not found' });
+    }
+
+    const user = await User.findById(employeeId);
+
+    res.json({
+      payroll,
+      employee: user
+    });
+  } catch (error) {
+    console.error('Get payslip error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 const createMeetingForUser = async (req, res) => {
   try {
     const meeting = await meetingService.createMeeting(req.body, req.user._id);
@@ -176,5 +279,7 @@ export {
   getMyLeaves,
   getMyMeetings,
   createMeetingForUser,
-  getAllEmployeesForUser
+  getAllEmployeesForUser,
+  getSalaryData,
+  getPayslip // 👈 NEW: Added to exports
 };

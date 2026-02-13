@@ -1,51 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { getEmployeeById, getPayrollStatus } from '../../services/adminService';
+import { useParams } from 'react-router-dom';
+import { getPayslip } from '../../services/employeeService';
 import logo from '../../logo.svg';
-import './SalarySlipPrint.css';
+import './EmployeePayslipPrint.css';
 
-const SalarySlipPrint = () => {
-    const { employeeId, month, year } = useParams();
-    const location = useLocation();
-    const [employee, setEmployee] = useState(null);
+const EmployeePayslipPrint = () => {
+    const { month, year } = useParams();
     const [payroll, setPayroll] = useState(null);
+    const [employee, setEmployee] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
     useEffect(() => {
-        const loadData = async () => {
+        const loadPayslip = async () => {
             try {
-                const emp = await getEmployeeById(employeeId);
-                const payrolls = await getPayrollStatus(month, year);
-                const record = payrolls.find(p => p.employee === employeeId);
-
-                setEmployee(emp);
-                setPayroll(record);
+                setLoading(true);
+                const data = await getPayslip(month, year);
+                setPayroll(data.payroll);
+                setEmployee(data.employee);
             } catch (err) {
-                console.error("Failed to load slip data", err);
+                console.error("Failed to load payslip", err);
+                setError("Payslip not found or could not be loaded.");
             } finally {
                 setLoading(false);
             }
         };
-        loadData();
-    }, [employeeId, month, year]);
+        loadPayslip();
+    }, [month, year]);
 
     useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const isPreview = queryParams.get('preview') === 'true';
-
-        if (!loading && employee && payroll && !isPreview) {
+        if (!loading && employee && payroll) {
+            // Auto-trigger print after a short delay to ensure rendering
             setTimeout(() => {
                 window.print();
             }, 500);
         }
-    }, [loading, employee, payroll, location.search]);
+    }, [loading, employee, payroll]);
 
-    if (loading) return <div>Loading slip...</div>;
-    if (!employee || !payroll) return <div>Data not found</div>;
+    if (loading) return <div style={{ padding: '20px' }}>Loading payslip details...</div>;
+    if (error) return <div style={{ padding: '20px', color: 'red' }}>{error}</div>;
+    if (!employee || !payroll) return <div style={{ padding: '20px' }}>Data not found</div>;
 
     const convertNumberToWords = (amount) => {
         return "Rupees " + amount.toLocaleString() + " Only";
@@ -190,4 +188,4 @@ const SalarySlipPrint = () => {
     );
 };
 
-export default SalarySlipPrint;
+export default EmployeePayslipPrint;

@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
           {/* ✅ Logo + Text as ONE clickable brand unit */}
           <div className="nav-brand-container">
             <img src="/logo6.png" alt="CollegeReviewZ" className="nav-logo" />
-            <span className="nav-brand-text">CollegeReviewZ EMS</span>
+            <span className="nav-brand-text">CRZ EMS</span>
           </div>
 
           <button className="mobile-menu-btn" onClick={toggleMobileMenu}>
@@ -65,6 +65,7 @@ const Layout = ({ children }) => {
                       <Link to="/employee/tasks" className="nav-link" onClick={closeMobileMenu}>
                         My Tasks
                       </Link>
+
                       <Link to="/employee/leaves" className="nav-link" onClick={closeMobileMenu}>
                         Leaves
                       </Link>
@@ -91,7 +92,6 @@ const Layout = ({ children }) => {
             )}
           </div>
         </div>
-
       </nav>
       <main className="main-content">{children}</main>
     </div>

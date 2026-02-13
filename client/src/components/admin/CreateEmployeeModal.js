@@ -4,6 +4,67 @@ import { createEmployee } from '../../services/adminService';
 import './CreateEmployeeModal.css';
 
 const CreateEmployeeModal = ({ onClose, onSuccess }) => {
+  // Comprehensive list of all organization roles
+  const allDesignations = [
+    // Engineering
+    "Intern",
+    "Trainee",
+    "Junior Software Engineer",
+    "Software Engineer",
+    "Senior Software Engineer",
+    "Lead Software Engineer",
+    "Staff Software Engineer",
+    "Principal Engineer",
+    "Engineering Manager",
+    "Senior Engineering Manager",
+    "Director of Engineering",
+    "VP of Engineering",
+
+    // Data
+    "Junior Data Analyst",
+    "Data Analyst",
+    "Senior Data Analyst",
+    "Lead Analyst",
+    "Analytics Manager",
+    "Principal Data Analyst",
+
+    // Product
+    "Associate Product Manager",
+    "Product Manager",
+    "Senior Product Manager",
+    "Group Product Manager",
+    "Director of Product",
+    "VP of Product",
+
+    // Design
+    "Junior UI/UX Designer",
+    "UI/UX Designer",
+    "Senior UI/UX Designer",
+    "Lead UI/UX Designer",
+    "Design Manager",
+
+    // HR
+    "HR Intern",
+    "HR Executive",
+    "Senior HR Executive",
+    "HR Generalist",
+    "HR Manager",
+    "Senior HR Manager",
+    "Director of HR",
+
+    // Marketing & Sales
+    "Marketing Intern",
+    "Marketing Associate",
+    "Marketing Executive",
+    "Senior Marketing Executive",
+    "Marketing Manager",
+    "Sales Intern",
+    "Sales Executive",
+    "Senior Sales Executive",
+    "Sales Manager",
+    "Regional Sales Manager"
+  ].sort();
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -131,14 +192,18 @@ const CreateEmployeeModal = ({ onClose, onSuccess }) => {
               </select>
             </div>
             <div className="form-group">
-              <label>Designation</label>
-              <input
-                type="text"
+              <label>Designation *</label>
+              <select
                 name="designation"
                 value={formData.designation}
                 onChange={handleChange}
-                placeholder="e.g. Software Engineer"
-              />
+                required
+              >
+                <option value="" disabled>Select Designation</option>
+                {allDesignations.map((role) => (
+                  <option key={role} value={role}>{role}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div className="modal-actions">

@@ -10,7 +10,6 @@
   --border-color: #E3EAF3;
   --success: #2E7D32;
   --warning: #EF6C00;
-  /* Adjusted for better visibility */
 }
 
 .employee-dashboard {
@@ -32,45 +31,26 @@
   padding-bottom: 0.5rem;
 }
 
-.dashboard-grid {
-  display: flex;
-  flex-direction: row;
+/* Main 3-column grid for top row */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Bottom full-width cards */
+.bottom-row .dashboard-card {
+  flex: none;
   width: 100%;
 }
 
-.dashboard-card {
-  flex: 1;
-  min-width: 0;
-  /* Prevents flex items from overflowing */
-}
-
-@media (max-width: 1200px) {
-  .dashboard-grid {
-    flex-wrap: wrap;
-  }
-
-  .dashboard-card {
-    flex: 1 1 calc(50% - 1.5rem);
-    /* 2 per row */
-  }
-}
-
-@media (max-width: 640px) {
-  .dashboard-card {
-    flex: 1 1 100%;
-    /* 1 per row */
-  }
-}
-
-/* Card Styling */
 .dashboard-card {
   background: var(--white);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.25rem;
   box-shadow: 0 4px 20px rgba(13, 71, 161, 0.08);
-  /* Soft blue shadow */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -117,12 +97,9 @@
   padding: 0.25rem 0.75rem;
   border-radius: 6px;
   word-break: break-word;
-  /* Gentler break: keeps words intact if possible */
   overflow-wrap: break-word;
-  /* Standard property for line breaking */
   text-align: right;
   max-width: 65%;
-  /* Extended slightly */
 }
 
 /* Stats Card */
@@ -154,7 +131,6 @@
   text-align: center;
   padding: 1.5rem 0;
   flex-grow: 1;
-  /* Center vertically in available space */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -190,7 +166,6 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Clock In Button (Green -> Blue aligned) */
 .btn-clock-in {
   background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
   color: white;
@@ -202,7 +177,6 @@
   box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
 }
 
-/* Clock Out Button (Red -> Orange/Warn aligned) */
 .btn-clock-out {
   background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
   color: white;
@@ -321,18 +295,36 @@
   font-weight: 500;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
+/* Responsive breakpoints - PERFECT 3-COLUMN ON LAPTOP/TABLET */
+@media (max-width: 1200px) {
+  .top-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    /* Still 3 columns */
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .top-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    /* Still 3 columns on tablets */
+    gap: 0.75rem;
+  }
+
   .employee-dashboard {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-row {
+    grid-template-columns: 1fr;
+    /* Stack on mobile */
+    gap: 1.5rem;
   }
 
   .employee-dashboard h1 {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
   }
 }

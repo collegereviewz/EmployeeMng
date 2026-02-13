@@ -133,8 +133,8 @@ const AdminEmployeeView = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center">Loading employee details...</div>;
-    if (!employee) return <div className="p-8 text-center text-red-600">Employee not found</div>;
+    if (loading) return <div className="loading-state">Loading employee details...</div>;
+    if (!employee) return <div className="error-state">Employee not found</div>;
 
     return (
         <div className="admin-employee-view">
@@ -142,36 +142,40 @@ const AdminEmployeeView = () => {
                 <button onClick={() => navigate('/admin/employees')} className="btn-back">
                     ← Back to List
                 </button>
-                <h1>{employee.name}</h1>
-                <span className={`status-badge ${employee.status}`}>{employee.status}</span>
+                <div className="header-content">
+                    <h1>{employee.name}</h1>
+                    <span className={`status-badge ${employee.status}`}>{employee.status}</span>
+                </div>
             </div>
 
             <div className="dashboard-grid">
                 {/* Card 1: Personal Info */}
                 <div className="dashboard-card info-card">
                     <h2>Personal Information</h2>
-                    <div className="info-item">
-                        <span className="label">Employee ID:</span>
-                        <span className="value">{employee._id.substring(0, 8).toUpperCase()}</span>
-                    </div>
-                    <div className="info-item">
-                        <span className="label">Email:</span>
-                        <span className="value">{employee.email}</span>
-                    </div>
-                    <div className="info-item">
-                        <span className="label">Designation:</span>
-                        <span className="value">{employee.designation || 'N/A'}</span>
-                    </div>
-                    <div className="info-item">
-                        <span className="label">Salary:</span>
-                        <span className="value">{formatCurrency(employee.salary)}</span>
-                    </div>
-                    {employee.status === 'terminated' && (
-                        <div className="info-item error">
-                            <span className="label">Terminated:</span>
-                            <span className="value">{employee.terminationReason}</span>
+                    <div className="info-list">
+                        <div className="info-item">
+                            <span className="label">Employee ID</span>
+                            <span className="value">{employee._id.substring(0, 8).toUpperCase()}</span>
                         </div>
-                    )}
+                        <div className="info-item">
+                            <span className="label">Email</span>
+                            <span className="value">{employee.email}</span>
+                        </div>
+                        <div className="info-item">
+                            <span className="label">Designation</span>
+                            <span className="value">{employee.designation || 'N/A'}</span>
+                        </div>
+                        <div className="info-item">
+                            <span className="label">Salary</span>
+                            <span className="value">{formatCurrency(employee.salary)}</span>
+                        </div>
+                        {employee.status === 'terminated' && (
+                            <div className="info-item error">
+                                <span className="label">Terminated</span>
+                                <span className="value">{employee.terminationReason}</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* Card 2: Actions & Payroll */}
@@ -179,15 +183,17 @@ const AdminEmployeeView = () => {
                     <h2>Actions & Payroll</h2>
 
                     <div className="month-selector">
-                        <label>Period:</label>
-                        <select value={currentMonth} onChange={(e) => setCurrentMonth(parseInt(e.target.value))}>
-                            {Array.from({ length: 12 }, (_, i) => (
-                                <option key={i} value={i + 1}>{new Date(0, i).toLocaleString('default', { month: 'long' })}</option>
-                            ))}
-                        </select>
-                        <select value={currentYear} onChange={(e) => setCurrentYear(parseInt(e.target.value))}>
-                            {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
+                        <label>Pay Period</label>
+                        <div className="month-inputs">
+                            <select value={currentMonth} onChange={(e) => setCurrentMonth(parseInt(e.target.value))}>
+                                {Array.from({ length: 12 }, (_, i) => (
+                                    <option key={i} value={i + 1}>{new Date(0, i).toLocaleString('default', { month: 'short' })}</option>
+                                ))}
+                            </select>
+                            <select value={currentYear} onChange={(e) => setCurrentYear(parseInt(e.target.value))}>
+                                {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="action-buttons">
@@ -220,21 +226,21 @@ const AdminEmployeeView = () => {
                         <div className="terminate-box">
                             <input
                                 type="text"
-                                placeholder="Reason for termination..."
+                                placeholder="Enter termination reason..."
                                 value={terminationReason}
                                 onChange={(e) => setTerminationReason(e.target.value)}
                             />
                             <div className="t-actions">
-                                <button onClick={handleTerminate} disabled={updating} className="btn-danger-sm">Confirm</button>
+                                <button onClick={handleTerminate} disabled={updating} className="btn-danger-sm">Confirm Terminate</button>
                                 <button onClick={() => setShowTerminate(false)} className="btn-sec-sm">Cancel</button>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Card 3: Attendance Graph (The "Single Tile" request) */}
+                {/* Card 3: Attendance Graph */}
                 <div className="dashboard-card graph-card-large">
-                    <h2>Attendance Graph</h2>
+                    <h2>Attendance Overview</h2>
                     <TimeGraph
                         entries={graphEntries}
                         startDate={graphRange.start}
@@ -248,9 +254,8 @@ const AdminEmployeeView = () => {
                     employee={employee}
                     payroll={{
                         ...payrollStatus,
-                        month: new Date().getMonth() + 1, // Defaulting to current if missing
-                        year: new Date().getFullYear(),   // Defaulting to current if missing
-                        ...payrollStatus // Allow override if API returns it
+                        month: currentMonth,
+                        year: currentYear
                     }}
                     onClose={() => setShowSlipModal(false)}
                 />

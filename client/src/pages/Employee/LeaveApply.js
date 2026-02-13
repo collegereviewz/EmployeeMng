@@ -79,88 +79,11 @@ const LeaveApply = () => {
           <p className="ems-page-subtitle">Submit your leave request for manager approval.</p>
         </div>
 
-        <div className="ems-main-grid">
+        {/* TOP SECTION: Information & Context */}
+        <div className="ems-leaves-top-grid">
 
-          {/* Main Request Form */}
-          <div className="ems-form-section">
-            <div className="ems-form-card">
-
-              {/* Feedback States */}
-              {message && (
-                <div className="ems-success-msg">
-                  <CheckCircle2 size={20} />
-                  <span>{message}</span>
-                </div>
-              )}
-
-              {error && (
-                <div className="ems-error-msg">
-                  <AlertCircle size={20} />
-                  <span>{error}</span>
-                </div>
-              )}
-
-              <div className="ems-form-content">
-                {/* Date Selection Row */}
-                <div className="ems-date-row">
-                  <div className="ems-date-field">
-                    <label className="ems-field-label ems-start-label">
-                      <Calendar /> Start Date
-                    </label>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={e => setStartDate(e.target.value)}
-                      className="ems-date-input"
-                    />
-                  </div>
-
-                  <div className="ems-date-field">
-                    <label className="ems-field-label ems-end-label">
-                      <Calendar /> End Date
-                    </label>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={e => setEndDate(e.target.value)}
-                      className="ems-date-input"
-                    />
-                  </div>
-                </div>
-
-                {/* Reason Field */}
-                <div className="ems-reason-field">
-                  <label className="ems-field-label">
-                    <FileText /> Reason for Leave
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={reason}
-                    onChange={e => setReason(e.target.value)}
-                    placeholder="Briefly describe the reason for your absence..."
-                    className="ems-textarea"
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <button
-                  onClick={submit}
-                  disabled={submitting}
-                  className="ems-submit-btn"
-                >
-                  {submitting ? (
-                    <Loader2 className="animate-spin" size={20} />
-                  ) : (
-                    <Send size={20} />
-                  )}
-                  {submitting ? 'Processing Request...' : 'Submit Request'}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Side Info Panel */}
-          <div className="ems-sidebar">
+          {/* LEFT: Notes & Calendar */}
+          <div className="ems-leaves-left-col">
             {/* CL Note */}
             <div className="cl-entitlement-note">
               <Info size={18} />
@@ -172,7 +95,11 @@ const LeaveApply = () => {
               <h3 className="text-lg font-semibold mb-3 text-gray-700">Holiday Calendar</h3>
               <BeautifulCalendar />
             </div>
+          </div>
 
+          {/* RIGHT: Summary & Tips */}
+          <div className="ems-leaves-right-col">
+            {/* Request Summary */}
             <div className="ems-summary-card">
               <CalendarDays />
               <h3>Request Summary</h3>
@@ -190,6 +117,7 @@ const LeaveApply = () => {
               </div>
             </div>
 
+            {/* Quick Tips */}
             <div className="ems-tips-card">
               <h4>
                 <Info /> Quick Tips
@@ -200,8 +128,88 @@ const LeaveApply = () => {
               </ul>
             </div>
           </div>
-
         </div>
+
+        {/* BOTTOM SECTION: Application Form */}
+        <div className="ems-leaves-bottom-section">
+          <div className="ems-form-card">
+
+            <h2 className="ems-card-title">Apply Leave</h2>
+
+            {/* Feedback States */}
+            {message && (
+              <div className="ems-success-msg">
+                <CheckCircle2 size={20} />
+                <span>{message}</span>
+              </div>
+            )}
+
+            {error && (
+              <div className="ems-error-msg">
+                <AlertCircle size={20} />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="ems-form-content">
+              {/* Date Selection Row */}
+              <div className="ems-date-row">
+                <div className="ems-date-field">
+                  <label className="ems-field-label ems-start-label">
+                    <Calendar /> Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={e => setStartDate(e.target.value)}
+                    className="ems-date-input"
+                  />
+                </div>
+
+                <div className="ems-date-field">
+                  <label className="ems-field-label ems-end-label">
+                    <Calendar /> End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={e => setEndDate(e.target.value)}
+                    className="ems-date-input"
+                  />
+                </div>
+              </div>
+
+              {/* Reason Field */}
+              <div className="ems-reason-field">
+                <label className="ems-field-label">
+                  <FileText /> Reason for Leave
+                </label>
+                <textarea
+                  rows={4}
+                  value={reason}
+                  onChange={e => setReason(e.target.value)}
+                  placeholder="Briefly describe the reason for your absence..."
+                  className="ems-textarea"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={submit}
+                disabled={submitting}
+                className="ems-submit-btn"
+              >
+                {submitting ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <Send size={20} />
+                )}
+                {submitting ? 'Processing Request...' : 'Submit Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

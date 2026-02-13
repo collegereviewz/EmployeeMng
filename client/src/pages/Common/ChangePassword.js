@@ -3,57 +3,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, Lock, Eye, EyeOff, Loader2, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { changeMyPassword } from '../../services/authService';
-import { useAuth } from '../../context/AuthContext';
 import './ChangePassword.css';
 
-const ChangePassword = () => {
-
-
-  const { user } = useAuth(); // Get current user context
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [email, setEmail] = useState(''); // New state for email
-  const [msg, setMsg] = useState({ type: '', text: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const InputField = ({ label, placeholder, value, setter, type = "password" }) => {
   const [showPass, setShowPass] = useState(false);
 
-  // Initialize email if admin
-  React.useEffect(() => {
-    if (user && user.role === 'admin') {
-      setEmail(user.email || '');
-    }
-  }, [user]);
-
-  const navigate = useNavigate();
-
-  const submit = async () => {
-    setMsg({ type: '', text: '' });
-
-    if (!oldPassword || !newPassword) {
-      return setMsg({ type: 'error', text: 'All fields are required' });
-    }
-    if (newPassword !== confirm) {
-      return setMsg({ type: 'error', text: 'Passwords do not match' });
-    }
-    if (newPassword.length < 6) {
-      return setMsg({ type: 'error', text: 'New password must be at least 6 characters' });
-    }
-
-    try {
-      setIsSubmitting(true);
-      // Pass email if admin, otherwise null/undefined
-      await changeMyPassword(oldPassword, newPassword, user?.role === 'admin' ? email : undefined);
-      setMsg({ type: 'success', text: 'Security updated! Redirecting to home...' });
-      setTimeout(() => navigate('/'), 1200);
-    } catch (err) {
-      setMsg({ type: 'error', text: err.message || 'Verification failed' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const InputField = ({ label, placeholder, value, setter, type = "password" }) => (
+  return (
     <div className="ems-input-group">
       <label className="ems-label">{label}</label>
       <div className="ems-input-wrapper">
@@ -77,6 +32,41 @@ const ChangePassword = () => {
       </div>
     </div>
   );
+};
+
+const ChangePassword = () => {
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [msg, setMsg] = useState({ type: '', text: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const navigate = useNavigate();
+
+  const submit = async () => {
+    setMsg({ type: '', text: '' });
+
+    if (!oldPassword || !newPassword) {
+      return setMsg({ type: 'error', text: 'All fields are required' });
+    }
+    if (newPassword !== confirm) {
+      return setMsg({ type: 'error', text: 'Passwords do not match' });
+    }
+    if (newPassword.length < 6) {
+      return setMsg({ type: 'error', text: 'New password must be at least 6 characters' });
+    }
+
+    try {
+      setIsSubmitting(true);
+      await changeMyPassword(oldPassword, newPassword);
+      setMsg({ type: 'success', text: 'Security updated! Redirecting to home...' });
+      setTimeout(() => navigate('/'), 1200);
+    } catch (err) {
+      setMsg({ type: 'error', text: err.message || 'Verification failed' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="ems-password-page">
@@ -115,28 +105,6 @@ const ChangePassword = () => {
                 value={oldPassword}
                 setter={setOldPassword}
               />
-
-              {user && user.role === 'admin' && (
-                <>
-                  <div className="ems-divider" />
-                  <div className="ems-input-group">
-                    <label className="ems-label">Email Address (Admin)</label>
-                    <div className="ems-input-wrapper">
-                      <div className="ems-input-icon">
-                        <ShieldCheck size={18} />
-                      </div>
-                      <input
-                        type="email"
-                        placeholder="admin@example.com"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        className="ems-input-field"
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
-
 
               <div className="ems-divider" />
 

@@ -11,7 +11,7 @@ const TaskList = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    assignedTo: [],
+    assignedTo: '',
     dueDate: '',
     role: ''
   });
@@ -67,27 +67,16 @@ const TaskList = () => {
       await assignTask({
         title: formData.title,
         description: formData.description,
-        assignedTo: formData.assignedTo, // This is now an array
+        assignedTo: formData.assignedTo,
         dueDate: formData.dueDate || null,
         role: formData.role || null
       });
       setShowModal(false);
-      setFormData({ title: '', description: '', assignedTo: [], dueDate: '', role: '' });
+      setFormData({ title: '', description: '', assignedTo: '', dueDate: '', role: '' });
       loadData();
     } catch (err) {
       setError(err.message);
     }
-  };
-
-  const handleCheckboxChange = (employeeId) => {
-    setFormData(prev => {
-      const currentAssigned = prev.assignedTo || [];
-      if (currentAssigned.includes(employeeId)) {
-        return { ...prev, assignedTo: currentAssigned.filter(id => id !== employeeId) };
-      } else {
-        return { ...prev, assignedTo: [...currentAssigned, employeeId] };
-      }
-    });
   };
 
   const getStatusColor = (status) => {
@@ -193,24 +182,19 @@ const TaskList = () => {
                 </div>
                 <div className="form-group">
                   <label>Assign To *</label>
-                  <div className="checkbox-list">
+                  <select
+                    name="assignedTo"
+                    value={formData.assignedTo}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select employee</option>
                     {employees.map((emp) => (
-                      <div key={emp._id} className="checkbox-item" onClick={() => handleCheckboxChange(emp._id)}>
-                        <input
-                          type="checkbox"
-                          checked={(formData.assignedTo || []).includes(emp._id)}
-                          onChange={() => { }} // Handled by div click
-                        />
-                        <label>{emp.name} ({emp.email})</label>
-                      </div>
+                      <option key={emp._id} value={emp._id}>
+                        {emp.name} ({emp.email})
+                      </option>
                     ))}
-                    {employees.length === 0 && <div style={{ padding: '0.5rem', color: '#666' }}>No employees found</div>}
-                  </div>
-                  {(!formData.assignedTo || formData.assignedTo.length === 0) && (
-                    <div style={{ color: '#c33', fontSize: '0.8rem', marginTop: '0.25rem' }}>
-                      * Please select at least one employee
-                    </div>
-                  )}
+                  </select>
                 </div>
                 <div className="form-group">
                   <label>Due Date</label>
