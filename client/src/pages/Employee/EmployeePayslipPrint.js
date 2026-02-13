@@ -66,8 +66,8 @@ const EmployeePayslipPrint = () => {
             <div className="slip-header-info">
                 {/* Left: GSTIN & CIN */}
                 <div className="header-left">
-                    <div>GSTIN: 27AAAPA1234A1Z5</div>
-                    <div>CIN: L01631KA2010PTC096843</div>
+                    <div>GSTIN: ----------</div>
+                    <div>CIN: ------------</div>
                 </div>
 
                 {/* Right: Payslip Box */}

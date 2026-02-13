@@ -22,7 +22,7 @@ const createTransporter = () => {
   });
 };
 
-const sendEmail = async ({ to, subject, text, html }) => {
+const sendEmail = async ({ to, subject, text, html, attachments }) => {
   const transporter = createTransporter();
   const from = process.env.EMAIL_FROM || process.env.SMTP_USER;
 
@@ -37,7 +37,8 @@ const sendEmail = async ({ to, subject, text, html }) => {
     to,
     subject,
     text,
-    html
+    html,
+    attachments
   };
 
   await transporter.sendMail(msg);

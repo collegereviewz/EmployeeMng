@@ -59,3 +59,29 @@ export const getUserById = async (userId) => {
     workHours: user.workHours
   };
 };
+
+export const updateEmail = async (userId, newEmail, password) => {
+  if (!newEmail || !password) throw new Error('New email and password are required');
+
+  const user = await User.findById(userId);
+  if (!user) throw new Error('User not found');
+
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch) throw new Error('Invalid password');
+
+  // Check if email is already taken
+  const existingUser = await User.findOne({ email: newEmail });
+  if (existingUser && existingUser._id.toString() !== userId.toString()) {
+    throw new Error('Email is already in use by another account');
+  }
+
+  user.email = newEmail;
+  await user.save();
+
+  return {
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role
+  };
+};

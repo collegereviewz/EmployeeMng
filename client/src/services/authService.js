@@ -23,3 +23,10 @@ export const changeMyPassword = async (oldPassword, newPassword) => {
     body: JSON.stringify({ oldPassword, newPassword })
   });
 };
+
+export const updateMyEmail = async (newEmail, password) => {
+  return await apiRequest('/auth/me/email', {
+    method: 'PUT',
+    body: JSON.stringify({ newEmail, password })
+  });
+};

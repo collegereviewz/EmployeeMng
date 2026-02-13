@@ -1,3 +1,7 @@
+import path from 'path';
+import fs from 'fs';
+import PDFDocument from 'pdfkit';
+import { sendEmail } from '../utils/email.js';
 import * as employeeService from '../services/employeeService.js';
 import * as taskService from '../services/taskService.js';
 import * as timeEntryService from '../services/timeEntryService.js';
@@ -104,15 +108,42 @@ const updateEmployeeWorkHours = async (req, res) => {
  */
 const assignTask = async (req, res) => {
   try {
-    const task = await taskService.createTask(req.body, req.user._id);
+    const { title, description, assignedTo, dueDate, role } = req.body;
+
+    if (!title || !assignedTo || (Array.isArray(assignedTo) && assignedTo.length === 0)) {
+      return res.status(400).json({ message: 'Title and at least one employee are required' });
+    }
+
+    const employeeIds = Array.isArray(assignedTo) ? assignedTo : [assignedTo];
+    const tasks = [];
+
+    // Iterate through each employee ID and create a task
+    for (const employeeId of employeeIds) {
+      try {
+        const task = await taskService.createTask({
+          title,
+          description,
+          assignedTo: employeeId,
+          dueDate,
+          role
+        }, req.user._id);
+        tasks.push(task);
+      } catch (error) {
+        console.error(`Failed to assign task to employee ${employeeId}:`, error);
+        // Continue assigning to other employees even if one fails
+        // Optionally, could collect errors to return to the client
+      }
+    }
+
+    if (tasks.length === 0 && employeeIds.length > 0) {
+      return res.status(400).json({ message: 'Failed to assign task to any employee. Check employee IDs.' });
+    }
+
     res.status(201).json({
-      message: 'Task assigned successfully',
-      task
+      message: `Task assigned successfully to ${tasks.length} employee(s)`,
+      tasks
     });
   } catch (error) {
-    if (error.message === 'Title and assignedTo are required' || error.message === 'Employee not found') {
-      return res.status(error.message === 'Employee not found' ? 404 : 400).json({ message: error.message });
-    }
     console.error('Assign task error:', error);
     res.status(500).json({ message: 'Server error' });
   }
@@ -344,6 +375,52 @@ const paySalary = async (req, res) => {
     });
 
     await payroll.save();
+
+    // Generate Salary Slip PDF and Email
+    const user = await User.findById(employeeId);
+    if (user && user.email) {
+      try {
+        const doc = new PDFDocument();
+        const buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+
+        doc.fontSize(20).text('Salary Slip', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(14).text(`Employee: ${user.name}`);
+        doc.text(`Employee ID: ${user._id}`);
+        doc.text(`Month/Year: ${month}/${year}`);
+        doc.moveDown();
+        doc.text(`Basic Salary: $${basicSalary}`);
+        doc.text(`Allowances: $${allowances}`);
+        doc.text(`Deductions: $${deductions}`);
+        doc.moveDown();
+        doc.fontSize(16).text(`Net Salary: $${basicSalary + allowances - deductions}`, { bold: true });
+
+        doc.end();
+
+        const pdfData = await new Promise((resolve) => {
+          doc.on('end', () => resolve(Buffer.concat(buffers)));
+        });
+
+        await sendEmail({
+          to: user.email,
+          subject: `Salary Slip for ${month}/${year}`,
+          text: `Dear ${user.name},\n\nPlease find attached your salary slip for ${month}/${year}.\n\nBest regards,\nAdmin`,
+          html: `<p>Dear ${user.name},</p><p>Please find attached your salary slip for <strong>${month}/${year}</strong>.</p><p>Best regards,<br>Admin</p>`,
+          attachments: [
+            {
+              filename: `SalarySlip_${month}_${year}.pdf`,
+              content: pdfData
+            }
+          ]
+        });
+        console.log(`Salary slip sent to ${user.email}`);
+      } catch (emailError) {
+        console.error('Failed to send salary slip email:', emailError);
+        // Don't fail the request if email fails, just log it
+      }
+    }
+
     res.status(201).json(payroll);
   } catch (error) {
     console.error('Pay salary error:', error);

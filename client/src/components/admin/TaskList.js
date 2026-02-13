@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getAllTasks, assignTask, getAllEmployees } from '../../services/adminService';
 import { formatDate } from '../../utils/format';
 import './TaskList.css';
@@ -11,10 +11,12 @@ const TaskList = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    assignedTo: '',
+    assignedTo: [], // Changed to array for multiple selection
     dueDate: '',
     role: ''
   });
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for custom dropdown
+  const dropdownRef = useRef(null); // Ref for closing dropdown on click outside
 
   const roles = [
     'Web Developer',
@@ -34,6 +36,19 @@ const TaskList = () => {
 
   useEffect(() => {
     loadData();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const loadData = async () => {
@@ -59,11 +74,37 @@ const TaskList = () => {
     });
   };
 
+  const handleMultiSelectChange = (employeeId) => {
+    setFormData((prev) => {
+      const isSelected = prev.assignedTo.includes(employeeId);
+      if (isSelected) {
+        return {
+          ...prev,
+          assignedTo: prev.assignedTo.filter((id) => id !== employeeId)
+        };
+      } else {
+        return {
+          ...prev,
+          assignedTo: [...prev.assignedTo, employeeId]
+        };
+      }
+    });
+  };
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent double submission
     setError('');
 
+    if (formData.assignedTo.length === 0) {
+      setError('Please select at least one employee');
+      return;
+    }
+
     try {
+      setIsSubmitting(true); // Start submission
       await assignTask({
         title: formData.title,
         description: formData.description,
@@ -72,10 +113,12 @@ const TaskList = () => {
         role: formData.role || null
       });
       setShowModal(false);
-      setFormData({ title: '', description: '', assignedTo: '', dueDate: '', role: '' });
+      setFormData({ title: '', description: '', assignedTo: [], dueDate: '', role: '' });
       loadData();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setIsSubmitting(false); // End submission
     }
   };
 
@@ -151,13 +194,11 @@ const TaskList = () => {
 
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          {/* Added style here as a fallback, but CSS handles it mainly */}
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>Assign New Task</h2>
             <form onSubmit={handleSubmit} className="task-modal-form">
               {error && <div className="error-message">{error}</div>}
 
-              {/* Form Body Container for better scrolling control if needed */}
               <div className="form-body">
                 <div className="form-group">
                   <label>Title *</label>
@@ -180,21 +221,37 @@ const TaskList = () => {
                     rows="4"
                   />
                 </div>
-                <div className="form-group">
+                <div className="form-group" ref={dropdownRef}>
                   <label>Assign To *</label>
-                  <select
-                    name="assignedTo"
-                    value={formData.assignedTo}
-                    onChange={handleChange}
-                    required
+                  <div
+                    className="multi-select-container"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
-                    <option value="">Select employee</option>
-                    {employees.map((emp) => (
-                      <option key={emp._id} value={emp._id}>
-                        {emp.name} ({emp.email})
-                      </option>
-                    ))}
-                  </select>
+                    <div className="multi-select-trigger">
+                      {formData.assignedTo.length > 0
+                        ? `${formData.assignedTo.length} selected`
+                        : 'Select employees'}
+                    </div>
+                    <div className={`multi-select-dropdown ${isDropdownOpen ? 'open' : ''}`}>
+                      {employees.map((emp) => (
+                        <div
+                          key={emp._id}
+                          className="checkbox-option"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMultiSelectChange(emp._id);
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={formData.assignedTo.includes(emp._id)}
+                            onChange={() => { }} // Handled by div click
+                          />
+                          <label>{emp.name} ({emp.email})</label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <div className="form-group">
                   <label>Due Date</label>
@@ -230,8 +287,12 @@ const TaskList = () => {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary">
-                  Assign Task
+                <button
+                  type="submit"
+                  className="btn-primary"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Assigning...' : 'Assign Task'}
                 </button>
               </div>
             </form>

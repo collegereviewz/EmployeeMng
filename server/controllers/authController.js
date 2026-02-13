@@ -53,5 +53,26 @@ const changePassword = async (req, res) => {
 export {
   login,
   getCurrentUser,
-  changePassword
+  changePassword,
+  updateEmail
+};
+
+const updateEmail = async (req, res) => {
+  try {
+    const { newEmail, password } = req.body;
+
+    // Only Admin Check (as per user request)
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Only admins are allowed to change their email.' });
+    }
+
+    const result = await authService.updateEmail(req.user._id, newEmail, password);
+    res.json({ message: 'Email updated successfully', user: result });
+  } catch (error) {
+    if (error.message === 'Invalid password' || error.message.includes('Email is already')) {
+      return res.status(400).json({ message: error.message });
+    }
+    console.error('Update email error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
